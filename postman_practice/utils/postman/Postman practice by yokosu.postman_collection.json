@@ -1,0 +1,359 @@
+{
+	"info": {
+		"_postman_id": "2a8ee3ba-e609-4d8a-9e12-da75519cdecf",
+		"name": "Postman practice by yokosu",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "18632553"
+	},
+	"item": [
+		{
+			"name": "sample",
+			"item": [
+				{
+					"name": "{{base_url}}/api/sample",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/sample",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"sample"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "プロジェクトが起動していれば、Supabaseやもろもろが繋がっていなくても実行できるリクエストを用意"
+		},
+		{
+			"name": "todos",
+			"item": [
+				{
+					"name": "{{base_url}}/api/todos",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"console.log(\"Pre-requestスクリプト実行中\");"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"console.log(\"Post-responseスクリプト実行中\");",
+									"// console.log(pm.response.code);",
+									"// console.log(pm.response.status);",
+									"// console.log(pm.response.headers);",
+									"// console.log(pm.response.responseTime);",
+									"// console.log(pm.response.responseSize);",
+									"// console.log(pm.response.text());",
+									"// console.log(pm.response.json());",
+									"",
+									"pm.test(\"ステータスコードは200\", function () {",
+									"  pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"配列をテストする\", () => {",
+									"  // errors 配列が空じゃない",
+									"  pm.expect(pm.response.json()).to.not.empty;",
+									"});",
+									"",
+									"",
+									"pm.test(\"ボディは文字列含む\", function () {",
+									"  pm.expect(pm.response.text()).to.include(\"abc\");",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/todos",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"todos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{base_url}}/api/todos?id=1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const res = pm.response.json().todo;",
+									"",
+									"pm.test(\"期待したtodoの返却\", () => {",
+									"  pm.expect(res.id).to.eql(1);",
+									"  pm.expect(res.title).to.eql(\"abc\");",
+									"  pm.expect(res.content).to.eql(\"ABC\");",
+									"});",
+									"",
+									"pm.test(\"レスポンスプロパティは環境変数と一致する\", function () {",
+									"  pm.expect(res.title).to.eql(pm.environment.get(\"todo1\"));",
+									"});",
+									"",
+									"pm.test(\"レスポンスのデータ型をテストする\", () => {",
+									"  pm.expect(res).to.be.an(\"object\");",
+									"  pm.expect(res.title).to.be.a(\"string\");",
+									"  pm.expect(res.content).to.be.a(\"string\");",
+									"});",
+									"",
+									"pm.test(\"オブジェクトのキー・プロパティをアサートする\", () => {",
+									"  pm.expect(res).to.have.all.keys('id', 'title', 'content', 'createdAt', 'updatedAt');",
+									"  pm.expect(res).to.have.any.keys('id', 'title');",
+									"  pm.expect(res).to.not.have.any.keys('ids', 'titles');",
+									"  pm.expect(res).to.have.property('id');",
+									"  pm.expect(res).to.be.a('object')",
+									"  .that.has.all.keys('id', 'title', 'content', 'createdAt', 'updatedAt');",
+									"",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// console.log(pm.environment.name);",
+									"// console.log(pm.environment.get(\"todo1\"));",
+									"console.log(pm.variables.has('id'));",
+									"pm.test(\"プレリク時の変数を確認する\", () => {",
+									"    pm.expect(pm.variables.has('id')).to.be.eql(true);",
+									"    pm.expect(pm.variables.get('id')).to.be.eql(\"1\");",
+									"    pm.variables.set('age',22);",
+									"    pm.expect(pm.variables.has('age')).to.be.eql(true);",
+									"    pm.expect(pm.variables.get('age')).to.be.eql(22);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/todos?id={{id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"todos"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "{{id}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{base_url}}/api/todos",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"console.log(\"Post-responseスクリプト実行中\");",
+									"console.log(pm.response.code);",
+									"console.log(pm.response.status);",
+									"",
+									"pm.test(\"Content-Type ヘッダーは application/json\", () => {",
+									"  pm.expect(pm.response.headers.get('Content-Type'))",
+									"    .to.include('application/json');",
+									"});",
+									"",
+									"",
+									"pm.test(\"POST リクエストに成功\", () => {",
+									"  pm.expect(pm.response.code).to.be.oneOf([",
+									"    200,201",
+									"  ]);",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"g\",\n  \"content\": \"G\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/todos",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"todos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{base_url}}/api/todos",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"console.log(\"Post-responseスクリプト実行中\");",
+									"console.log(pm.response.code);",
+									"console.log(pm.response.status);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": {{patch_target_id}},\n  \"title\": \"c3\",\n  \"content\": \"C3\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/todos",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"todos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{base_url}}/api/todos",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 7\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/todos",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"todos"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Prismaを使用してSupabaseにmigrationしたtodosテーブルを操作するAPIのテスト練習用フォルダです。"
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:3000",
+			"type": "string"
+		},
+		{
+			"key": "id",
+			"value": "1",
+			"type": "string"
+		},
+		{
+			"key": "patch_target_id",
+			"value": "3",
+			"type": "string"
+		}
+	]
+}

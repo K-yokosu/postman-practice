@@ -4,35 +4,32 @@ async function main() {
   // 初期データの作成
   const todos = [
     {
-      title: 'First Todo',
-      content: 'This is the content of the first todo.',
+      title: 'abc',
+      content: 'ABC',
     },
     {
-      title: 'Second Todo',
-      content: 'This is the content of the second todo.',
+      title: 'b',
+      content: 'B',
     },
     {
-      title: 'Third Todo',
-      content: 'This is the content of the third todo.',
+      title: 'c',
+      content: 'C',
     },
   ];
 
-  // データベースに挿入
-  for (const todo of todos) {
-    await prisma.todos.create({
-      data: todo,
-    });
+  try {
+    for (const todo of todos) {
+        await prisma.todos.create({
+            data: todo,
+        });
+    }
+  } catch (error) {
+    console.log(error)
+    process.exit(1)  // スクリプト実行時にエラー発生したら、異常終了としてプロセス終了をする
+  } finally {
+    await prisma.$disconnect(); //prismaとの接続を遮断
   }
-
-  console.log('Seed data has been added!');
 }
 
 // メイン関数を実行
-main()
-  .catch((e) => {
-    console.error(e);
-    process.exit(1);
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
-  });
+main();

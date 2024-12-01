@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 
 export async function GET(req: Request) {
+  await authCheck(req);
+
   const { searchParams } = new URL(req.url);
   const id = Number(searchParams.get("id"));
   if(id){
@@ -47,3 +49,19 @@ export async function DELETE(request: Request) {
     });
     return NextResponse.json({ todo });
 }
+
+
+export async function authCheck(request: Request) {
+  // リクエストヘッダーを取得
+  const clientApiKey = request.headers.get('x-api-key');
+
+  // 認証処理
+  if (!clientApiKey || clientApiKey !== process.env.API_KEY) {
+    return NextResponse.json(
+      { error: "Unauthorized: Invalid API key" },
+      { status: 401 }
+    );
+  }
+  return;
+}
+  

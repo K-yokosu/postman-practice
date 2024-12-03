@@ -1,21 +1,25 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 
-export async function GET(req: Request) {
-  await authCheck(req);
+export async function GET(request: Request) {
+    const result = await authCheck(request);
+    if(result?.status === 401) return result;
 
-  const { searchParams } = new URL(req.url);
-  const id = Number(searchParams.get("id"));
-  if(id){
+    const { searchParams } = new URL(request.url);
+    const id = Number(searchParams.get("id"));
+    if(id){
     const todo = await prisma.todos.findUnique({ where: { id } });
     return NextResponse.json({ todo });
-  } else{
+    } else{
     const todos = await prisma.todos.findMany();
     return NextResponse.json( todos )
-  }
+    }
 }
 
 export async function POST(request: Request) {
+    const result = await authCheck(request);
+    if(result?.status === 401) return result;
+
     const req = await request.json();
     const todo = await prisma.todos.create({
         data: {
@@ -27,6 +31,9 @@ export async function POST(request: Request) {
 }
 
 export async function PATCH(request: Request) {
+    const result = await authCheck(request);
+    if(result?.status === 401) return result;
+
     const req = await request.json();
     const todo = await prisma.todos.update({
         where: {
@@ -41,6 +48,9 @@ export async function PATCH(request: Request) {
 }
 
 export async function DELETE(request: Request) {
+    const result = await authCheck(request);
+    if(result?.status === 401) return result;
+    
     const req = await request.json();
     const todo = await prisma.todos.delete({
         where: {

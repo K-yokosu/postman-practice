@@ -6,7 +6,7 @@ Postman のワークショップイベントに参加し学んだ内容の復習
   - branch: postman_script_bigginer
   - 環境変数 & コレクション: postman_practice/utils/postman/
 - API認証
-  - branch: ?
+  - branch: postman_auth_apikey
   - 環境変数 & コレクション: ?
 - モックサーバー
   - branch: ?
